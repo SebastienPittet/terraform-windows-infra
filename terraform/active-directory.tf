@@ -32,44 +32,34 @@ Set-LocalUser `
  -Password $my_secure_password `
  -PasswordNeverExpires $true
 
-install-windowsfeature AD-Domain-Services -IncludeManagementTools
+New-Item `
+  -ItemType "directory" `
+  -Path "c:\Program Files" `
+  -Name "EXOSCALE" `
+  -Force
 
+New-Item `
+  -Path "HKLM:\SOFTWARE" `
+  -Name "EXOSCALE" `
+  -Force
 
-Install-ADDSForest `
--CreateDnsDelegation:$false `
--DatabasePath “C:\Windows\NTDS” `
--DomainMode “Win2012R2” `
--DomainName “yourdomain.internal” `
--DomainNetbiosName “YOURDOMAIN” `
--ForestMode “Win2012R2” `
--InstallDns:$true `
--LogPath “C:\Windows\NTDS” `
--NoRebootOnCompletion:$true `
--SysvolPath “C:\Windows\SYSVOL” `
--Force:$true `
--SafeModeAdministratorPassword $my_secure_password
+New-ItemProperty `
+  -Path "HKLM:\Software\EXOSCALE" `
+  -Name "TF-Executed" `
+  -Value "<3 cloud-init user data!" `
+  -PropertyType "String"
 
-New-ADComputer `
- -Name "FS01" `
- -AccountPassword $my_secure_password
+Invoke-WebRequest `
+  -Uri "https://raw.githubusercontent.com/SebastienPittet/lametric-ssl-expiry/master/requirements.txt" `
+  -OutFile "C:\Program Files\EXOSCALE\requirements.txt"
 
-New-ADUser `
- -Name "Exoscale" `
- -SamAccountName "Exoscale" `
- -CannotChangePassword $true `
- -ChangePasswordAtLogon $false `
- -PasswordNeverExpires $true `
- -Company "Exoscale" `
- -DisplayName "Exoscale" `
- -Accountpassword (ConvertTo-SecureString -String 'Exoscal3!' -AsPlainText -Force)[0] `
- -Enabled $true
+New-ItemProperty `
+  -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" `
+  -Name "Step2" `
+  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe ""C:\Program Files\EXOSCALE\test.ps1"" " `
+  -PropertyType "String"
 
 Restart-Computer
-
-Add-ADGroupMember `
- -Identity Administrators `
- -Members Exoscale
-
 EOF
 }
 
