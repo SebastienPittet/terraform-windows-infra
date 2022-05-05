@@ -50,13 +50,13 @@ New-ItemProperty `
   -PropertyType "String"
 
 Invoke-WebRequest `
-  -Uri "https://raw.githubusercontent.com/SebastienPittet/lametric-ssl-expiry/master/requirements.txt" `
-  -OutFile "C:\Program Files\EXOSCALE\requirements.txt"
+  -Uri "https://raw.githubusercontent.com/SebastienPittet/terraform-windows-infra/master/powershell-scripts/run_01.ps1" `
+  -OutFile "C:\Program Files\EXOSCALE\run_01.ps1"
 
 New-ItemProperty `
   -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" `
   -Name "Step2" `
-  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe ""C:\Program Files\EXOSCALE\test.ps1"" " `
+  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe ""C:\Program Files\EXOSCALE\run_01.ps1"" " `
   -PropertyType "String"
 
 Restart-Computer
