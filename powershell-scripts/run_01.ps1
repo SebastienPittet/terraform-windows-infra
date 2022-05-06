@@ -8,13 +8,13 @@ Set-LocalUser `
 
 # Configure next step (run_02) before reboot
 Invoke-WebRequest `
-  -Uri "https://raw.githubusercontent.com/SebastienPittet/lametric-ssl-expiry/master/requirements.txt" `
+  -Uri "https://raw.githubusercontent.com/SebastienPittet/terraform-windows-infra/master/powershell-scripts/run_02.ps1" `
   -OutFile "C:\Program Files\EXOSCALE\run_02.ps1"
 
 New-ItemProperty `
   -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" `
   -Name "Step2" `
-  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe ""C:\Program Files\EXOSCALE\run_02.ps1"" " `
+  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -File ""C:\Program Files\EXOSCALE\run_02.ps1"" " `
   -PropertyType "String"
 
 Install-windowsfeature AD-Domain-Services -IncludeManagementTools

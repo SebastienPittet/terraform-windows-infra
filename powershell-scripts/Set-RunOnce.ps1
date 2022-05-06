@@ -50,3 +50,5 @@ function Set-RunOnce
          -PropertyType ExpandString
     }
 }
+
+#Set-RunOnce -Keyname RunOnce -command '%systemroot%\System32\WindowsPowerShell\v1.0\powershell.exe -executionpolicy bypass -file C:\Program Files\EXOSCALE\run_01.ps1'
