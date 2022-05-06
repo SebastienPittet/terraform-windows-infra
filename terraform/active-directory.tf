@@ -59,7 +59,7 @@ New-ItemProperty `
   -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe ""C:\Program Files\EXOSCALE\run_01.ps1"" " `
   -PropertyType "String"
 
-#Restart-Computer
+Restart-Computer -Wait
 EOF
 }
 
