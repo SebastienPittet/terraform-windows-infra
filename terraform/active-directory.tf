@@ -43,23 +43,42 @@ New-Item `
   -Name "EXOSCALE" `
   -Force
 
+
+Invoke-WebRequest `
+  -Uri "https://raw.githubusercontent.com/SebastienPittet/terraform-windows-infra/master/powershell-scripts/run_01.ps1" `
+  -OutFile "C:\Program Files\EXOSCALE\run_01.ps1"
+
+
+New-ItemProperty `
+  -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" `
+  -Name "Run01" `
+  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -File ""C:\Program Files\EXOSCALE\run_01.ps1"" " `
+  -PropertyType "String"
+
+
+Install-windowsfeature AD-Domain-Services -IncludeManagementTools
+
+
+Install-ADDSForest `
+ -CreateDnsDelegation:$false `
+ -DatabasePath "C:\Windows\NTDS" `
+ -DomainMode "Win2012R2" `
+ -DomainName "exoscale.local" `
+ -DomainNetbiosName "EXOSCALE" `
+ -ForestMode "Win2012R2" `
+ -InstallDns:$true `
+ -LogPath "C:\Windows\NTDS" `
+ -NoRebootOnCompletion:$false `
+ -SysvolPath "C:\Windows\SYSVOL" `
+ -Force:$true `
+ -SafeModeAdministratorPassword $my_secure_password
+
 New-ItemProperty `
   -Path "HKLM:\Software\EXOSCALE" `
   -Name "TF-Executed" `
   -Value "<3 cloud-init user data!" `
   -PropertyType "String"
 
-Invoke-WebRequest `
-  -Uri "https://raw.githubusercontent.com/SebastienPittet/terraform-windows-infra/master/powershell-scripts/run_01.ps1" `
-  -OutFile "C:\Program Files\EXOSCALE\run_01.ps1"
-
-New-ItemProperty `
-  -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" `
-  -Name "Step2" `
-  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe ""C:\Program Files\EXOSCALE\run_01.ps1"" " `
-  -PropertyType "String"
-
-Restart-Computer -Wait
 EOF
 }
 
