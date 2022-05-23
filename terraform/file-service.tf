@@ -8,7 +8,17 @@ resource "exoscale_anti_affinity_group" "FILEservers" {
   description = "Windows File servers using DFS-R"
 }
 
+# This resource will create (potentially immediately) after null_resource.next
+resource "null_resource" "previous" {}
+
+resource "time_sleep" "wait_3_minutes" {
+  depends_on = [null_resource.previous]
+
+  create_duration = "3m"
+}
+ 
 resource "exoscale_compute_instance" "fs01" {
+  depends_on = [time_sleep.wait_3_minutes]
   zone               = local.zone
   name               = "FS01"
   type               = "standard.large"
@@ -25,33 +35,40 @@ resource "exoscale_compute_instance" "fs01" {
   user_data          = <<EOF
 #ps1
 
-Set-DnsClientServerAddress `
- -Serveraddresses 
+$privIntAlias = (Get-NetIPAddress -IPAddress "10.0.0.30" | Select-Object -Property InterfaceAlias).InterfaceAlias
+Set-DnsClientServerAddress -InterfaceAlias $privIntAlias -ServerAddresses 10.0.0.20
 
+Install-WindowsFeature `
+  File-Services, `
+  FS-FileServer, `
+  FS-BranchCache, `
+  FS-Data-Deduplication, `
+  FS-DFS-Namespace, `
+  FS-DFS-Replication, `
+  FS-VSS-Agent `
+ -IncludeManagementTools
 
-Install-WindowsFeature FS-BranchCache FS-Data-Deduplication -IncludeManagementTools
+#Get-NetAdapter | Where-Object {$_.Name -eq "Ethernet"} | Set-DnsClientServerAddress `
+# -ServerAddresses ${exoscale_compute_instance.dc01.public_ip_address}
 
-$my_secure_password = convertto-securestring "Exoscal3!" -asplaintext -force
+$my_secure_password = convertto-securestring "${var.default_password}" -asplaintext -force
+$username = "Administrator"
+
+$credObject = New-Object System.Management.Automation.PSCredential ($userName, $my_secure_password)
 
 Set-LocalUser `
- -Name Administrator `
+ -Name $username `
  -AccountNeverExpires `
  -Password $my_secure_password `
  -PasswordNeverExpires $true
 
-$joinCred = New-Object pscredential -ArgumentList ([pscustomobject]@{
-    UserName = $null
-    Password = $my_secure_password
-})
-
-
-Start-Sleep -s 600
-
 Add-Computer `
- -DomainName "YOURDOMAIN" `
- -ComputerName "FS01" `
- -Options UnsecuredJoin,PasswordPass `
- -Credential $joinCred
- -Server YOURDOMAIN\DC01
+ -ComputerName FS01 `
+ -LocalCredential $credObject `
+ -DomainName exoscale.internal `
+ -Credential $credObject `
+ # -Options UnsecuredJoin,PasswordPass `
+ -Restart
+
 EOF
 }
