@@ -47,10 +47,6 @@ Invoke-WebRequest `
   -Uri "https://raw.githubusercontent.com/SebastienPittet/terraform-windows-infra/master/powershell-scripts/run_01.ps1" `
   -OutFile "C:\Program Files\${var.addsNETBIOS}\run_01.ps1"
 
-  Invoke-WebRequest `
-  -Uri "https://raw.githubusercontent.com/SebastienPittet/terraform-windows-infra/refs/heads/master/powershell-scripts/run_02.ps1" `
-  -OutFile "C:\Program Files\${var.addsNETBIOS}\run_02.ps1"
-
 New-ItemProperty `
   -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" `
   -Name "Run01" `
