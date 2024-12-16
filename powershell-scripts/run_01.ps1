@@ -23,4 +23,5 @@ New-ItemProperty `
   Set-DhcpServerv4OptionValue -OptionID 3 -Value 10.0.0.1 -ScopeID 10.0.0.0 -ComputerName DC01.exoscale.internal
   Set-DhcpServerv4OptionValue -DnsDomain exoscale.internal -DnsServer 10.0.0.20
   
-  
+  Restart-Computer `
+    -Force
