@@ -17,7 +17,7 @@ New-ItemProperty `
     -IncludeManagementTools
   Restart-Service dhcpserver
   Add-DhcpServerInDC -DnsName DC01.exoscale.internal -IPAddress 10.0.0.20
-  Set-ItemProperty –Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ServerManager\Roles\12 –Name ConfigurationState –Value 2
+  Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ServerManager\Roles\12 -Name ConfigurationState -Value 2
   Add-DhcpServerv4Scope -name "Exoscale" -StartRange 10.0.0.100 -EndRange 10.0.0.150 -SubnetMask 255.255.255.0 -State Active
   Add-DhcpServerv4ExclusionRange -ScopeID 10.0.0.0 -StartRange 10.0.0.1 -EndRange 10.0.0.100
   Set-DhcpServerv4OptionValue -OptionID 3 -Value 10.0.0.1 -ScopeID 10.0.0.0 -ComputerName DC01.exoscale.internal
