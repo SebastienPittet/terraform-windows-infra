@@ -1,13 +1,13 @@
-data "exoscale_compute_template" "fw" {
+data "exoscale_template" "fw" {
   zone = local.zone
-  name = "FortiGate 7.0 BYOL"
+  name = "FortiGate 7.4.3 BYOL"
 }
 
 resource "exoscale_compute_instance" "firewall" {
   zone               = local.zone
   name               = "Firewall"
   type               = "standard.small"
-  template_id        = data.exoscale_compute_template.fw.id
+  template_id        = data.exoscale_template.fw.id
   disk_size          = 50
   security_group_ids = [exoscale_security_group.vpn.id]
   network_interface {

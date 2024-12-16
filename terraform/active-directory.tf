@@ -1,4 +1,4 @@
-data "exoscale_compute_template" "active-directory" {
+data "exoscale_template" "active-directory" {
   zone = local.zone
   name = "Windows Server 2022"
 }
@@ -12,7 +12,7 @@ resource "exoscale_compute_instance" "dc01" {
   zone               = local.zone
   name               = "DC01"
   type               = "cpu.extra-large"
-  template_id        = data.exoscale_compute_template.active-directory.id
+  template_id        = data.exoscale_template.active-directory.id
   disk_size          = 60
   security_group_ids = [exoscale_security_group.rdpservers.id]
   network_interface {
@@ -47,10 +47,14 @@ Invoke-WebRequest `
   -Uri "https://raw.githubusercontent.com/SebastienPittet/terraform-windows-infra/master/powershell-scripts/run_01.ps1" `
   -OutFile "C:\Program Files\${var.addsNETBIOS}\run_01.ps1"
 
+  Invoke-WebRequest `
+  -Uri "https://raw.githubusercontent.com/SebastienPittet/terraform-windows-infra/refs/heads/master/powershell-scripts/run_02.ps1" `
+  -OutFile "C:\Program Files\${var.addsNETBIOS}\run_02.ps1"
+
 New-ItemProperty `
   -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" `
   -Name "Run01" `
-  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -File ""C:\Program Files\${var.addsNETBIOS}\run_01.ps1"" " `
+  -Value "powershell.exe -File ""C:\Program Files\${var.addsNETBIOS}\run_01.ps1"" " `
   -PropertyType "String"
 
 $privIntAlias = (Get-NetIPAddress -IPAddress "10.0.0.20" | Select-Object -Property InterfaceAlias).InterfaceAlias

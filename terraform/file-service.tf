@@ -1,4 +1,4 @@
-data "exoscale_compute_template" "file-service" {
+data "exoscale_template" "file-service" {
   zone = local.zone
   name = "Windows Server 2022"
 }
@@ -22,7 +22,7 @@ resource "exoscale_compute_instance" "fs01" {
   zone               = local.zone
   name               = "FS01"
   type               = "standard.large"
-  template_id        = data.exoscale_compute_template.file-service.id
+  template_id        = data.exoscale_template.file-service.id
   disk_size          = 60
   security_group_ids = [exoscale_security_group.rdpservers.id]
   network_interface {

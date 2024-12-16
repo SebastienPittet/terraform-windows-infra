@@ -6,7 +6,7 @@ Invoke-WebRequest `
 New-ItemProperty `
   -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" `
   -Name "Run-02" `
-  -Value "%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe -File ""C:\Program Files\EXOSCALE\run_02.ps1"" " `
+  -Value "powershell.exe -File ""C:\Program Files\EXOSCALE\run_02.ps1"" " `
   -PropertyType "String"
 
   $privIntAlias = (Get-NetIPAddress -IPAddress "10.0.0.20" | Select-Object -Property InterfaceAlias).InterfaceAlias
