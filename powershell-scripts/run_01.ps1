@@ -23,5 +23,11 @@ New-ItemProperty `
   Set-DhcpServerv4OptionValue -OptionID 3 -Value 10.0.0.1 -ScopeID 10.0.0.0 -ComputerName DC01.exoscale.internal
   Set-DhcpServerv4OptionValue -DnsDomain exoscale.internal -DnsServer 10.0.0.20
   
+New-ItemProperty `
+  -Path "HKLM:\Software\${var.addsNETBIOS}" `
+  -Name "Step 1" `
+  -Value "run_01.ps1=Done!" `
+  -PropertyType "String"
+
   Restart-Computer `
     -Force

@@ -60,12 +60,6 @@ New-ItemProperty `
 $privIntAlias = (Get-NetIPAddress -IPAddress "10.0.0.20" | Select-Object -Property InterfaceAlias).InterfaceAlias
 Set-DnsClientServerAddress -InterfaceAlias $privIntAlias -ServerAddresses ("127.0.0.1", "1.1.1.1")
 
-New-ItemProperty `
-  -Path "HKLM:\Software\${var.addsNETBIOS}" `
-  -Name "TF-Executed" `
-  -Value "<3 cloud-init user data!" `
-  -PropertyType "String"
-
 Install-windowsfeature AD-Domain-Services -IncludeManagementTools
 
 Install-ADDSForest `
@@ -82,6 +76,11 @@ Install-ADDSForest `
  -Force:$true `
  -SafeModeAdministratorPassword $my_secure_password
 
+New-ItemProperty `
+  -Path "HKLM:\Software\${var.addsNETBIOS}" `
+  -Name "TF-Executed" `
+  -Value "<3 cloud-init user data!" `
+  -PropertyType "String"
 
 EOF
 }
