@@ -48,6 +48,20 @@ Install-WindowsFeature `
   FS-VSS-Agent `
  -IncludeManagementTools
 
+$ShareParameters `
+ -Description 'Exoscale Data'  `
+ -Path 'C:\Program Files\Exoscale'  `
+ -Name 'Exoscale' `
+ -FullAccess = 'Administrators' `
+ -ChangeAccess = 'Exoscale\Users'
+
+ NewSmbShare @ShareParameters
+
+ New-DfsRoot  `
+  -TargetPath '\\Exoscale\Data' `
+  -Type 'DomainV2' `
+  -Path '\\Exoscale\Data'
+
 #Get-NetAdapter | Where-Object {$_.Name -eq "Ethernet"} | Set-DnsClientServerAddress `
 # -ServerAddresses ${exoscale_compute_instance.dc01.public_ip_address}
 
